@@ -1,9 +1,24 @@
 package br.com.ilines.futeonline.main;
 
 
-
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import java.util.List;
+
+import br.com.ilines.futeonline.futeonline.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -38,9 +53,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView();
+        setContentView(R.layout.activity_login);
         // Set up the login form.
-         /* mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
        // populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -55,16 +70,16 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.login);
-        mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
+        // Button mEmailSignInButton = (Button) findViewById(R.id.login);
+        /* mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // attemptLogin();
             }
-        });
+        }); */
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress); */
+        // mLoginFormView = findViewById(R.id.login_form);
+        // mProgressView = findViewById(R.id.login_progress);
     }
 /*
     private void populateAutoComplete() {
@@ -163,7 +178,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
     */
-
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
@@ -178,6 +192,7 @@ public class LoginActivity extends AppCompatActivity {
      * Shows the progress UI and hides the login form.
      */
 
+    /*
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -210,7 +225,7 @@ public class LoginActivity extends AppCompatActivity {
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
-
+*/
    /* @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
@@ -244,7 +259,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
     } */
-
+/*
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
@@ -253,8 +268,8 @@ public class LoginActivity extends AppCompatActivity {
 
         mEmailView.setAdapter(adapter);
     }
-
-
+*/
+/*
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -263,7 +278,7 @@ public class LoginActivity extends AppCompatActivity {
 
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
-    }
+    }*/
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
