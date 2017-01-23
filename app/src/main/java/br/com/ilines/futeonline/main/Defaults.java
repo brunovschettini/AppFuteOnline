@@ -129,9 +129,9 @@ public class Defaults extends AppCompatActivity {
         return "http://192.168.1.160:8080/FuteOnline";
     }
 
-    public static String  getKeyToken() {
+    public static String getKeyToken() {
         String key_token = Cookies.get("4cc355t0k3nfut0nl1n3");
-        if(key_token == null) {
+        if (key_token == null) {
             return "";
         }
         return key_token;
