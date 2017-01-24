@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="br.com.ilines.futeonline.futeonline">
+    package="br.com.futeonline">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -18,24 +18,24 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="br.com.ilines.futeonline.main.MainActivity">
+        <activity android:name="br.com.futeonline.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="br.com.ilines.futeonline.main.Config"
+            android:name="br.com.futeonline.main.Config"
             android:label="@string/title_activity_config"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
 
 
-        <activity android:name="br.com.ilines.futeonline.main.Atividade2" android:label="@string/title_activity_atividade2"> </activity>
-        <activity android:name="br.com.ilines.futeonline.main.NotificationView" android:label="@string/title_notification_view"> </activity>
-        <activity android:name="br.com.ilines.futeonline.main.LoginActivity" android:label="LoginActivity" android:theme="@style/AppTheme.NoActionBar"> </activity>
-        <activity android:name="br.com.ilines.futeonline.main.RegisterActivity" android:label="RegisterActivity" android:theme="@style/AppTheme.NoActionBar"> </activity>
+        <activity android:name="br.com.futeonline.main.Atividade2" android:label="@string/title_activity_atividade2"> </activity>
+        <activity android:name="br.com.futeonline.main.NotificationView" android:label="@string/title_notification_view"> </activity>
+        <activity android:name="br.com.futeonline.main.LoginActivity" android:label="LoginActivity" android:theme="@style/AppTheme.NoActionBar"> </activity>
+        <activity android:name="br.com.futeonline.main.RegisterActivity" android:label="RegisterActivity" android:theme="@style/AppTheme.NoActionBar"> </activity>
     </application>
 
 </manifest>

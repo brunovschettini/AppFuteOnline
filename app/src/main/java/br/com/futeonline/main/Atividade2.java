@@ -4,7 +4,7 @@ package br.com.futeonline.main;
 import android.app.Activity;
 import android.os.Bundle;
 
-import br.com.ilines.futeonline.futeonline.R;
+import br.com.futeonline.R;
 
 public class Atividade2 extends Activity {
 

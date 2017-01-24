@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import br.com.ilines.futeonline.futeonline.R;
+import br.com.futeonline.R;
 import br.com.futeonline.utils.DialogMessage;
 import br.com.futeonline.utils.Validator;
 

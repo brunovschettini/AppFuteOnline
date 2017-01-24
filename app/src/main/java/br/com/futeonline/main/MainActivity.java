@@ -32,8 +32,9 @@ import java.util.Map;
 import br.com.futeonline.objects.Notify;
 import br.com.futeonline.utils.Consulta;
 import br.com.futeonline.utils.Cookies;
-import br.com.futeonline.futeonline.R;
+
 import br.com.futeonline.utils.QueryResult;
+import br.com.futeonline.R;
 
 public class MainActivity extends AppCompatActivity {
 

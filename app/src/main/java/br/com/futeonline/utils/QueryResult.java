@@ -2,7 +2,7 @@ package br.com.futeonline.utils;
 
 import com.google.gson.Gson;
 
-import br.com.ilines.futeonline.objects.Notify;
+import br.com.futeonline.objects.Notify;
 
 public class QueryResult {
 

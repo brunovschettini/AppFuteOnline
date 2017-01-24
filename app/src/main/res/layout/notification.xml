@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.com.ilines.futeonline.main.NotificationView">
+    tools:context="br.com.futeonline.main.NotificationView">
 
     <WebView
         android:layout_width="fill_parent"

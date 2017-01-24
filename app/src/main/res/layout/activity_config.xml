@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        tools:context="br.com.ilines.futeonline.main.Config">
+        tools:context="br.com.futeonline.main.Config">
 
 
         <WebView

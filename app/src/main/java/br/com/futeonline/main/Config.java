@@ -20,7 +20,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.ilines.futeonline.futeonline.R;
+import br.com.futeonline.R;
 import br.com.futeonline.utils.Consulta;
 import br.com.futeonline.utils.Cookies;
 import br.com.futeonline.utils.DialogMessage;

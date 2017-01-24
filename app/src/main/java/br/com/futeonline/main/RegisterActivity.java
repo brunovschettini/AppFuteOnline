@@ -9,7 +9,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import br.com.ilines.futeonline.futeonline.R;
+import br.com.futeonline.R;
 
 /**
  * A login screen that offers login via email/password.
