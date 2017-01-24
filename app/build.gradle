@@ -6,7 +6,7 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        applicationId "br.com.ilines.futeonline"
+        applicationId "br.com.futeonline"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
