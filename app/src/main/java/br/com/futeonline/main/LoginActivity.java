@@ -4,15 +4,19 @@ package br.com.futeonline.main;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -43,12 +47,29 @@ import static android.Manifest.permission.READ_CONTACTS;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private WebView wv;
     private EditText login;
     private EditText password;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        wv = (WebView) findViewById(R.id.webView);
+        pref = getApplicationContext().getSharedPreferences("futeonline-sessions", 0); // 0 - for private mode
+        editor = pref.edit();
+        try {
+            if (pref.getString("access_key", null) != null && !pref.getString("access_key", null).isEmpty()) {
+                Intent it = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(it);
+                return;
+            }
 
+        } catch (Exception e) {
+            e.getMessage();
+        }
 /*
         db = new SQLiteDatabaseHandler(this);
         // create some players
@@ -76,8 +97,16 @@ public class LoginActivity extends AppCompatActivity {
 
         }
         */
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 16) {
+            // wv.getSettings().setMediaPlaybackRequiresUserGesture(false);
+        }
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
         // Set up the login form.
         login = (EditText) findViewById(R.id.login);
         password = (EditText) findViewById(R.id.password);
@@ -98,7 +127,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 attemptLogin();
-                return;
             }
         });
         Button register = (Button) findViewById(R.id.register);
@@ -106,7 +134,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 register();
-                return;
             }
         });
     }
@@ -130,8 +157,6 @@ public class LoginActivity extends AppCompatActivity {
         }
         Map map2 = new HashMap();
         try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("access_token", "903e346610a64c66d12af4f35bb98166");
             String result = Consulta.result(Consulta.makeRequestNonToken(Defaults.getSite() + "/ws/auth/in/" + login.getText().toString() + "/" + password.getText().toString()));
             UserToken userToken = null;
             QueryResult queryResult = null;
@@ -143,7 +168,7 @@ public class LoginActivity extends AppCompatActivity {
             if (queryResult == null) {
                 try {
                     userToken = new Gson().fromJson(result, UserToken.class);
-                    if (userToken  == null) {
+                    if (userToken == null) {
                         DialogMessage.show(this, "500");
                         return;
                     }
@@ -151,11 +176,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
             } else {
+                editor.putString("access_key", "1111");
+                editor.putInt("user_id", Integer.parseInt("" + userToken.getUsers().getId()));
+                editor.commit();
                 DialogMessage.show(this, queryResult.getObject().toString());
             }
-            DialogMessage.show(this, "SUCESSO");
-            // Intent it = new Intent(LoginActivity.this, MainActivity.class);
-            // startActivity(it);
+
+            Intent it = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(it);
             // Cookies.get()
         } catch (Exception e) {
 
@@ -163,9 +191,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void register() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Defaults.getSite() + "/" + "register"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Defaults.getSite() + "/" + "register.xhtml"));
         startActivity(browserIntent);
     }
 
 }
 
+
+// sessoes
+// http://www.androidhive.info/2012/08/android-session-management-using-shared-preferences/

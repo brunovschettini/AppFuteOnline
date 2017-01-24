@@ -68,13 +68,6 @@ public class MainActivity extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
         }
 
-        if (Defaults.getKeyToken().isEmpty()) {
-            Intent it = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(it);
-            return;
-        }
-
-
         btn_notify = (Button) findViewById(R.id.btn_notify);
 
         btn_notify.setOnClickListener(new View.OnClickListener() {
