@@ -131,6 +131,7 @@ public class Consulta {
 
             return httpclient.execute(httpost);
         } catch (Exception e) {
+            e.getMessage();
             return null;
         }
     }

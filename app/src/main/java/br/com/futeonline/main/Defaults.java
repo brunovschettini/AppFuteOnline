@@ -125,8 +125,8 @@ public class Defaults extends AppCompatActivity {
     }
 
     public static String getSite() {
-        // return "http://futeonline.ddns.net";
-        return "http://192.168.1.160:8080/FuteOnline";
+        return "http://futeonline.ddns.net";
+        // return "http://192.168.1.160:8080/FuteOnline";
     }
 
     public static String getKeyToken() {

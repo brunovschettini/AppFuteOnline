@@ -32,6 +32,7 @@ import br.com.futeonline.R;
 import br.com.futeonline.objects.Notify;
 import br.com.futeonline.objects.UserToken;
 import br.com.futeonline.utils.Consulta;
+import br.com.futeonline.utils.Cookies;
 import br.com.futeonline.utils.DialogMessage;
 import br.com.futeonline.utils.Progress;
 import br.com.futeonline.utils.QueryResult;
@@ -131,17 +132,31 @@ public class LoginActivity extends AppCompatActivity {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("access_token", "903e346610a64c66d12af4f35bb98166");
-            String result = Consulta.result(Consulta.makeRequestNonToken(Defaults.getSite() + "/ws/auth"));
+            String result = Consulta.result(Consulta.makeRequestNonToken(Defaults.getSite() + "/ws/auth/in/" + login.getText().toString() + "/" + password.getText().toString()));
             UserToken userToken = null;
+            QueryResult queryResult = null;
             try {
-                userToken = new Gson().fromJson(result, UserToken.class);
+                queryResult = new Gson().fromJson(result, QueryResult.class);
             } catch (Exception e) {
 
             }
-            if(userToken == null) {
-                return;
+            if (queryResult == null) {
+                try {
+                    userToken = new Gson().fromJson(result, UserToken.class);
+                    if (userToken  == null) {
+                        DialogMessage.show(this, "500");
+                        return;
+                    }
+                } catch (Exception e) {
+
+                }
+            } else {
+                DialogMessage.show(this, queryResult.getObject().toString());
             }
-            DialogMessage.show(this, "LOGIN RE INVÁLIDA!");
+            DialogMessage.show(this, "SUCESSO");
+            // Intent it = new Intent(LoginActivity.this, MainActivity.class);
+            // startActivity(it);
+            // Cookies.get()
         } catch (Exception e) {
 
         }
