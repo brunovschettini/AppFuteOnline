@@ -8,8 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import br.com.futeonline.objects.UserToken;
 
-public class UserTokenLite extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+public class UserTokenLite   {
+
+   /*  private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "PlayersDB";
     private static final String TABLE_NAME = "Players";
     private static final String KEY_ID = "id";
@@ -120,5 +121,5 @@ public class UserTokenLite extends SQLiteOpenHelper {
         db.close();
 
         return i;
-    }
+    }*/
 }
