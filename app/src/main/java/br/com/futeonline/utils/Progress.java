@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 
 
 public class Progress extends AppCompatActivity {
-
+/*
     private ProgressBar progressBar;
     private ObjectAnimator animation;
 
@@ -40,4 +40,5 @@ public class Progress extends AppCompatActivity {
     public void stop() {
         animation.end();
     }
+    */
 }

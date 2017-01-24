@@ -81,6 +81,16 @@ public class Consulta {
         return result;
     }
 
+    public static HttpResponse makeRequestNonToken(String path) throws Exception {
+        return makeRequest(null, path, null);
+    }
+
+
+    public static HttpResponse makeRequest(String path) throws Exception {
+        String key_token = Cookies.get("4cc355t0k3nfut0nl1n3");
+        return makeRequest(key_token, path, null);
+    }
+
 
     public static HttpResponse makeRequest(String path, JSONObject jsonObject) throws Exception {
         String key_token = Cookies.get("4cc355t0k3nfut0nl1n3");

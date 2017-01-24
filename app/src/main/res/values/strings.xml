@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">FuteOnline</string>
+    <string name="app_details">Gerenciador esportivo</string>
     <string name="title_activity_config">Configiração</string>
     <string name="title_notification_view">Notificações</string>
     <string name="title_activity_atividade2">Atividade2</string>
