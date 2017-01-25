@@ -1,6 +1,5 @@
 package br.com.futeonline.main;
 
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -11,58 +10,52 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.WebView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONObject;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import br.com.futeonline.R;
-import br.com.futeonline.objects.Notify;
 import br.com.futeonline.objects.UserToken;
 import br.com.futeonline.utils.Consulta;
-import br.com.futeonline.utils.Cookies;
 import br.com.futeonline.utils.DialogMessage;
 import br.com.futeonline.utils.Progress;
 import br.com.futeonline.utils.QueryResult;
+import br.com.futeonline.utils.Sessions;
 import br.com.futeonline.utils.Validator;
-
-import static android.Manifest.permission.READ_CONTACTS;
-
 
 public class LoginActivity extends AppCompatActivity {
 
     private WebView wv;
     private EditText login;
     private EditText password;
-    private SharedPreferences pref;
+    private SharedPreferences pref;  // 0 - for private mode
     private SharedPreferences.Editor editor;
+    private Sessions sessions;
+    // private Progress progress;
+    private View mProgressView;
+    private View mLoginFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        View v = this.findViewById(android.R.id.content).getRootView();
         wv = (WebView) findViewById(R.id.webView);
-        pref = getApplicationContext().getSharedPreferences("futeonline-sessions", 0); // 0 - for private mode
-        editor = pref.edit();
+        View view = findViewById(R.id.login_form);
+        mLoginFormView = findViewById(R.id.login_form);
+        // progress = new Progress();
+        // progress = new Progress(getResources(), v, mLoginFormView);
         try {
-            if (pref.getString("access_key", null) != null && !pref.getString("access_key", null).isEmpty()) {
-                Intent it = new Intent(LoginActivity.this, MainActivity.class);
+            if (!sessions.getString("access_key").isEmpty()) {
+                Context packageContext = LoginActivity.this;
+                Intent it = new Intent(LoginActivity.this, LoginActivity.class);
                 startActivity(it);
                 return;
             }
@@ -70,6 +63,8 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.getMessage();
         }
+
+        mProgressView = findViewById(R.id.login_progress);
 /*
         db = new SQLiteDatabaseHandler(this);
         // create some players
@@ -139,51 +134,69 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void attemptLogin() {
+        View focusView = null;
         if (login == null || login.getText().toString().isEmpty()) {
             DialogMessage.show(this, "LOGIN!");
+            focusView = login;
+            focusView.requestFocus();
             return;
         }
         if (!Validator.isEmailValid(login.getText().toString())) {
             DialogMessage.show(this, "LOGIN INVÁLIDO!");
+            focusView = login;
+            focusView.requestFocus();
             return;
         }
         if (password == null || password.getText().toString().isEmpty()) {
             DialogMessage.show(this, "SENHA!");
+            focusView = password;
+            focusView.requestFocus();
             return;
         }
         if (!Validator.isPasswordValid(password.getText().toString())) {
             DialogMessage.show(this, "SENHA INVÁLIDA!");
+            focusView = password;
+            focusView.requestFocus();
             return;
         }
         Map map2 = new HashMap();
         try {
+            showProgress(true);
             String result = Consulta.result(Consulta.makeRequestNonToken(Defaults.getSite() + "/ws/auth/in/" + login.getText().toString() + "/" + password.getText().toString()));
+            showProgress(false);
             UserToken userToken = null;
             QueryResult queryResult = null;
+            Boolean convert = false;
             try {
                 queryResult = new Gson().fromJson(result, QueryResult.class);
+                convert = true;
             } catch (Exception e) {
 
             }
-            if (queryResult == null) {
+            if (queryResult == null || queryResult.getStatus() == null) {
                 try {
                     userToken = new Gson().fromJson(result, UserToken.class);
                     if (userToken == null) {
                         DialogMessage.show(this, "500");
                         return;
                     }
+                    try {
+                        sessions.put("access_key", userToken.getAccessToken());
+                        String s = pref.getString("access_key", null);
+                        editor.commit();
+                        DialogMessage.show(this, queryResult.getObject().toString());
+                    } catch (Exception e) {
+                        DialogMessage.show(this, e.getMessage());
+                    }
+                    Intent it = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(it);
                 } catch (Exception e) {
 
                 }
             } else {
-                editor.putString("access_key", "1111");
-                editor.putInt("user_id", Integer.parseInt("" + userToken.getUsers().getId()));
-                editor.commit();
-                DialogMessage.show(this, queryResult.getObject().toString());
-            }
 
-            Intent it = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(it);
+
+            }
             // Cookies.get()
         } catch (Exception e) {
 
@@ -193,6 +206,56 @@ public class LoginActivity extends AppCompatActivity {
     public void register() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Defaults.getSite() + "/" + "register.xhtml"));
         startActivity(browserIntent);
+    }
+
+    public Boolean isLogged() {
+        try {
+            if (pref.getString("access_key", null) != null && !pref.getString("access_key", null).isEmpty()) {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+        if (show) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+            }
+        }
     }
 
 }

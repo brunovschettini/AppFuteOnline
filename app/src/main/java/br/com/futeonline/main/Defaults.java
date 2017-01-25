@@ -1,10 +1,13 @@
 package br.com.futeonline.main;
 
+import android.content.Context;
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 
 import org.json.JSONObject;
 
 import br.com.futeonline.utils.Cookies;
+import br.com.futeonline.utils.Debbuger;
 import br.com.futeonline.utils.JsonUtils;
 
 public class Defaults extends AppCompatActivity {
@@ -125,8 +128,11 @@ public class Defaults extends AppCompatActivity {
     }
 
     public static String getSite() {
-        return "http://futeonline.ddns.net";
-        // return "http://192.168.1.160:8080/FuteOnline";
+        if (Debug.isDebuggerConnected() || Debug.waitingForDebugger()) {
+            return "http://192.168.1.160:8080/FuteOnline";
+        } else {
+            return "http://futeonline.ddns.net";
+        }
     }
 
     public static String getKeyToken() {
