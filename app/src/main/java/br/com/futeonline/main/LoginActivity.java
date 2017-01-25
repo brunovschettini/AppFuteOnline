@@ -3,6 +3,7 @@ package br.com.futeonline.main;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import java.util.HashMap;
@@ -39,7 +41,6 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private Sessions sessions;
     // private Progress progress;
-    private View mProgressView;
     private View mLoginFormView;
 
     @Override
@@ -50,8 +51,6 @@ public class LoginActivity extends AppCompatActivity {
         wv = (WebView) findViewById(R.id.webView);
         View view = findViewById(R.id.login_form);
         mLoginFormView = findViewById(R.id.login_form);
-        // progress = new Progress();
-        // progress = new Progress(getResources(), v, mLoginFormView);
         try {
             if (!sessions.getString("access_key").isEmpty()) {
                 Context packageContext = LoginActivity.this;
@@ -63,8 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.getMessage();
         }
-
-        mProgressView = findViewById(R.id.login_progress);
+        // mProgressView = findViewById(R.id.login_progress);
 /*
         db = new SQLiteDatabaseHandler(this);
         // create some players
@@ -135,35 +133,40 @@ public class LoginActivity extends AppCompatActivity {
 
     public void attemptLogin() {
         View focusView = null;
+        View v = this.findViewById(android.R.id.content).getRootView();
+
+
         if (login == null || login.getText().toString().isEmpty()) {
-            DialogMessage.show(this, "LOGIN!");
+            login.setError(getString(R.string.error_invalid_email));
             focusView = login;
             focusView.requestFocus();
             return;
         }
         if (!Validator.isEmailValid(login.getText().toString())) {
-            DialogMessage.show(this, "LOGIN INVÁLIDO!");
+            login.setError(getString(R.string.error_invalid_email));
             focusView = login;
             focusView.requestFocus();
             return;
         }
         if (password == null || password.getText().toString().isEmpty()) {
-            DialogMessage.show(this, "SENHA!");
+            password.setError(getString(R.string.error_invalid_password));
             focusView = password;
             focusView.requestFocus();
             return;
         }
         if (!Validator.isPasswordValid(password.getText().toString())) {
-            DialogMessage.show(this, "SENHA INVÁLIDA!");
+            password.setError(getString(R.string.error_invalid_password));
             focusView = password;
             focusView.requestFocus();
             return;
         }
         Map map2 = new HashMap();
         try {
-            showProgress(true);
+            final ProgressDialog ringProgressDialog = ProgressDialog.show(this, "Please wait ...", "...", true);
             String result = Consulta.result(Consulta.makeRequestNonToken(Defaults.getSite() + "/ws/auth/in/" + login.getText().toString() + "/" + password.getText().toString()));
-            showProgress(false);
+            ringProgressDialog.dismiss();
+
+            // showProgress(false);
             UserToken userToken = null;
             QueryResult queryResult = null;
             Boolean convert = false;
@@ -183,7 +186,6 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         sessions.put("access_key", userToken.getAccessToken());
                         String s = pref.getString("access_key", null);
-                        editor.commit();
                         DialogMessage.show(this, queryResult.getObject().toString());
                     } catch (Exception e) {
                         DialogMessage.show(this, e.getMessage());
@@ -194,8 +196,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
             } else {
-
-
+                DialogMessage.show(this, queryResult.getObject().toString());
             }
             // Cookies.get()
         } catch (Exception e) {
@@ -217,45 +218,6 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         }
         return false;
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
-        if (show) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-            }
-        }
     }
 
 }

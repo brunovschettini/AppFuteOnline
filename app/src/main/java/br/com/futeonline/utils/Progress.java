@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.LoaderManager;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Loader;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -16,23 +18,29 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 
+import br.com.futeonline.R;
+import br.com.futeonline.main.MainActivity;
 
-public class Progress extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+public class Progress extends AppCompatActivity {
 
     private View view;
     private View progress;
     private Resources resources;
+    private ProgressDialog progressDialog;
 
     public Progress() {
         this.resources = null;
         this.view = null;
         this.progress = null;
+        this.progressDialog = null;
     }
 
-    public Progress( Resources resources, View view, View progress) {
+    public Progress(Resources resources, View view, View progress) {
         this.resources = resources;
         this.view = view;
         this.progress = progress;
+        this.progressDialog = progressDialog;
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
@@ -73,18 +81,25 @@ public class Progress extends AppCompatActivity implements LoaderManager.LoaderC
 
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+    public void define(Context c, String message) {
+        progressDialog = new ProgressDialog(c);
+        progressDialog.setMessage(message);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        // progressDialog.setProgress(0);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setIcon(R.drawable.preloader_1);
+        try {
+            new Thread().sleep(2000);
+        } catch (Exception e) {
+
+        }
     }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+    public void start() {
+        progressDialog.show();
     }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
+    public void stop() {
+        progressDialog.dismiss();
     }
 }
