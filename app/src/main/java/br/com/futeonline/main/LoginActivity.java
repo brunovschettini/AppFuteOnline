@@ -38,11 +38,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText login;
     private EditText password;
     private SharedPreferences pref;  // 0 - for private mode
-    private SharedPreferences.Editor editor;
-    private Sessions sessions;
     // private Progress progress;
     private View mLoginFormView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +48,10 @@ public class LoginActivity extends AppCompatActivity {
         wv = (WebView) findViewById(R.id.webView);
         View view = findViewById(R.id.login_form);
         mLoginFormView = findViewById(R.id.login_form);
+        pref = getApplicationContext().getSharedPreferences("futeonline", 0);
         try {
-            if (!sessions.getString("access_key").isEmpty()) {
-                Context packageContext = LoginActivity.this;
-                Intent it = new Intent(LoginActivity.this, LoginActivity.class);
+            if (!pref.getString("access_token", "").isEmpty()) {
+                Intent it = new Intent(LoginActivity.this, MenuActivity.class);
                 startActivity(it);
                 return;
             }
@@ -122,13 +119,6 @@ public class LoginActivity extends AppCompatActivity {
                 attemptLogin();
             }
         });
-        Button register = (Button) findViewById(R.id.register);
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                register();
-            }
-        });
     }
 
     public void attemptLogin() {
@@ -184,14 +174,14 @@ public class LoginActivity extends AppCompatActivity {
                         return;
                     }
                     try {
-                        sessions.put("access_key", userToken.getAccessToken());
-                        String s = pref.getString("access_key", null);
-                        DialogMessage.show(this, queryResult.getObject().toString());
+                        pref.edit().putString("access_token", userToken.getAccessToken());
+                        String s = pref.getString("access_token", null);
+                        Intent it = new Intent(LoginActivity.this, MenuActivity.class);
+                        startActivity(it);
                     } catch (Exception e) {
                         DialogMessage.show(this, e.getMessage());
                     }
-                    Intent it = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(it);
+
                 } catch (Exception e) {
 
                 }
@@ -211,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public Boolean isLogged() {
         try {
-            if (pref.getString("access_key", null) != null && !pref.getString("access_key", null).isEmpty()) {
+            if (pref.getString("access_token", null) != null && !pref.getString("access_token", null).isEmpty()) {
                 return true;
             }
         } catch (Exception e) {

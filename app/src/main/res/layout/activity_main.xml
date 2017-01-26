@@ -1,24 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="br.com.futeonline.main.MainActivity">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="br.com.futeonline.main.MainActivity"
+    android:background="@drawable/bg_main">
 
-    <WebView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/webView"
-        android:layout_alignParentTop="true"
-        android:soundEffectsEnabled="true"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp" />
+   <ScrollView
+        android:id="@+id/login_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <!-- <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Exemplo Notification"/> -->
+        <LinearLayout
+            android:id="@+id/email_login_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <Button android:id="@+id/btn_notify" android:layout_alignParentBottom="true" android:layout_alignParentRight="true" android:layout_height="wrap_content" android:layout_width="80px" android:text="..."  />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <Button
+                    android:id="@+id/loggin"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="190dp"
+                    android:text="@string/txt_auth"
+                    android:textStyle="bold" />
+            </android.support.design.widget.TextInputLayout>
 
-
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/register"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/txt_register"
+                    android:textStyle="bold" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

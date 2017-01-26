@@ -19,26 +19,16 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".main.LoginActivity" android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".main.MainActivity" android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".main.MainActivity"
-            android:label="MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".main.LoginActivity" android:label="LoginActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".main.MenuActivity" android:label="MenuActivity" android:theme="@style/AppTheme.NoActionBar">
         </activity>
-
-        <activity
-            android:name=".main.Config"
-            android:label="@string/title_activity_config"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-
-
+        <activity android:name=".main.Config" android:label="@string/title_activity_config" android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".main.Atividade2" android:label="@string/title_activity_atividade2"> </activity>
         <activity android:name=".main.NotificationView" android:label="@string/title_notification_view"> </activity>
         <activity android:name=".main.RegisterActivity" android:label="RegisterActivity" android:theme="@style/AppTheme.NoActionBar"> </activity>

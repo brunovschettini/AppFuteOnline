@@ -1,23 +1,37 @@
 package br.com.futeonline.utils;
 
 
-import android.app.Activity;
 import android.content.SharedPreferences;
-import android.support.annotation.BoolRes;
+import android.support.v7.app.AppCompatActivity;
 
 // http://www.androidhive.info/2012/08/android-session-management-using-shared-preferences/
 
-public class Sessions extends Activity {
+public class Sessions extends AppCompatActivity {
 
-    private SharedPreferences pref = getApplicationContext().getSharedPreferences("futeonline", 0);  // 0 - for private mode
+    private SharedPreferences pref;  // 0 - for private mode
 
 
-    // PUT
+    public Sessions() {
+        try {
+            pref = getApplicationContext().getSharedPreferences("futeonline", 0);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public Sessions(SharedPreferences pref) {
+        try {
+            pref = getApplicationContext().getSharedPreferences("futeonline", 0);
+        } catch (Exception e) {
+            this.pref = pref;
+        }
+    }
+
 
     public void put(String key, String value) {
         try {
-            pref.edit().putString(key, value);
-            pref.edit().commit();
+            getPref().edit().putString(key, value);
+            getPref().edit().commit();
         } catch (Exception e) {
 
         }
@@ -25,8 +39,8 @@ public class Sessions extends Activity {
 
     public void put(String key, Integer value) {
         try {
-            pref.edit().putInt(key, value);
-            pref.edit().commit();
+            getPref().edit().putInt(key, value);
+            getPref().edit().commit();
         } catch (Exception e) {
 
         }
@@ -35,8 +49,8 @@ public class Sessions extends Activity {
 
     public void put(String key, Long value) {
         try {
-            pref.edit().putLong(key, value);
-            pref.edit().commit();
+            getPref().edit().putLong(key, value);
+            getPref().edit().commit();
         } catch (Exception e) {
 
         }
@@ -44,8 +58,8 @@ public class Sessions extends Activity {
 
     public void put(String key, Float value) {
         try {
-            pref.edit().putFloat(key, value);
-            pref.edit().commit();
+            getPref().edit().putFloat(key, value);
+            getPref().edit().commit();
         } catch (Exception e) {
 
         }
@@ -53,8 +67,8 @@ public class Sessions extends Activity {
 
     public void put(String key, Boolean value) {
         try {
-            pref.edit().putBoolean(key, value);
-            pref.edit().commit();
+            getPref().edit().putBoolean(key, value);
+            getPref().edit().commit();
         } catch (Exception e) {
 
         }
@@ -64,7 +78,7 @@ public class Sessions extends Activity {
 
     public String getString(String session_name) {
         try {
-            return pref.getString(session_name, "");
+            return getPref().getString(session_name, "");
         } catch (Exception e) {
 
         }
@@ -73,7 +87,7 @@ public class Sessions extends Activity {
 
     public Integer getInteger(String session_name) {
         try {
-            return pref.getInt(session_name, new Integer(0));
+            return getPref().getInt(session_name, new Integer(0));
         } catch (Exception e) {
 
         }
@@ -82,7 +96,7 @@ public class Sessions extends Activity {
 
     public Long getLong(String session_name) {
         try {
-            return pref.getLong(session_name, new Long(0));
+            return getPref().getLong(session_name, new Long(0));
         } catch (Exception e) {
 
         }
@@ -91,7 +105,7 @@ public class Sessions extends Activity {
 
     public Boolean getBoolean(String session_name) {
         try {
-            return pref.getBoolean(session_name, false);
+            return getPref().getBoolean(session_name, false);
         } catch (Exception e) {
 
         }
@@ -100,7 +114,7 @@ public class Sessions extends Activity {
 
     public Float getFloat(String session_name) {
         try {
-            return pref.getFloat(session_name, 0.0f);
+            return getPref().getFloat(session_name, 0.0f);
         } catch (Exception e) {
 
         }
@@ -111,8 +125,8 @@ public class Sessions extends Activity {
 
     public void remove(String session_name) {
         try {
-            pref.edit().remove(session_name);
-            pref.edit().commit();
+            getPref().edit().remove(session_name);
+            getPref().edit().commit();
         } catch (Exception e) {
 
         }
@@ -120,11 +134,18 @@ public class Sessions extends Activity {
 
     public void destroy() {
         try {
-            pref.edit().clear();
-            pref.edit().commit();
+            getPref().edit().clear();
+            getPref().edit().commit();
         } catch (Exception e) {
 
         }
     }
 
+    public SharedPreferences getPref() {
+        return pref;
+    }
+
+    public void setPref(SharedPreferences pref) {
+        this.pref = pref;
+    }
 }

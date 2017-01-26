@@ -7,7 +7,7 @@
     <string name="txt_login">Email</string>
     <string name="txt_password">Senha</string>
     <string name="txt_auth">Entrar</string>
-    <string name="txt_register">Registrar</string>
+    <string name="txt_register">Cadastre-se</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Senha</string>
     <string name="action_sign_in">Sign in or register</string>
@@ -19,4 +19,5 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="txt_logged">Entrar</string>
 </resources>
