@@ -48,11 +48,11 @@ public class MenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_menu);
         pref = getApplicationContext().getSharedPreferences("futeonline", 0);
         try {
-            /* if (pref.getString("access_token", "").isEmpty()) {
+            if (pref.getString("access_token", "").isEmpty()) {
                 Intent it = new Intent(MenuActivity.this, MainActivity.class);
                 startActivity(it);
                 return;
-            }*/
+            }
 
         } catch (Exception e) {
             e.getMessage();

@@ -1,37 +1,30 @@
 package br.com.futeonline.utils;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 
 // http://www.androidhive.info/2012/08/android-session-management-using-shared-preferences/
 
-public class Sessions extends AppCompatActivity {
+public class Sessions {
 
-    private SharedPreferences pref;  // 0 - for private mode
+    private SharedPreferences sharedPreferences;  // 0 - for private mode
+    private SharedPreferences.Editor editor;
 
-
-    public Sessions() {
+    public Sessions(Context context) {
         try {
-            pref = getApplicationContext().getSharedPreferences("futeonline", 0);
+            sharedPreferences = context.getSharedPreferences("futeonline", 0);
         } catch (Exception e) {
-
+            e.getMessage();
         }
     }
-
-    public Sessions(SharedPreferences pref) {
-        try {
-            pref = getApplicationContext().getSharedPreferences("futeonline", 0);
-        } catch (Exception e) {
-            this.pref = pref;
-        }
-    }
-
 
     public void put(String key, String value) {
         try {
-            getPref().edit().putString(key, value);
-            getPref().edit().commit();
+            editor = sharedPreferences.edit();
+            editor.putString(key, value);
+            editor.commit();
         } catch (Exception e) {
 
         }
@@ -39,18 +32,19 @@ public class Sessions extends AppCompatActivity {
 
     public void put(String key, Integer value) {
         try {
-            getPref().edit().putInt(key, value);
-            getPref().edit().commit();
+            editor = sharedPreferences.edit();
+            editor.putInt(key, value);
+            editor.commit();
         } catch (Exception e) {
 
         }
     }
 
-
     public void put(String key, Long value) {
         try {
-            getPref().edit().putLong(key, value);
-            getPref().edit().commit();
+            editor = sharedPreferences.edit();
+            editor.putLong(key, value);
+            editor.commit();
         } catch (Exception e) {
 
         }
@@ -58,8 +52,9 @@ public class Sessions extends AppCompatActivity {
 
     public void put(String key, Float value) {
         try {
-            getPref().edit().putFloat(key, value);
-            getPref().edit().commit();
+            editor = sharedPreferences.edit();
+            editor.putFloat(key, value);
+            editor.commit();
         } catch (Exception e) {
 
         }
@@ -67,8 +62,9 @@ public class Sessions extends AppCompatActivity {
 
     public void put(String key, Boolean value) {
         try {
-            getPref().edit().putBoolean(key, value);
-            getPref().edit().commit();
+            editor = sharedPreferences.edit();
+            editor.putBoolean(key, value);
+            editor.commit();
         } catch (Exception e) {
 
         }
@@ -78,7 +74,7 @@ public class Sessions extends AppCompatActivity {
 
     public String getString(String session_name) {
         try {
-            return getPref().getString(session_name, "");
+            return sharedPreferences.getString(session_name, "");
         } catch (Exception e) {
 
         }
@@ -87,7 +83,7 @@ public class Sessions extends AppCompatActivity {
 
     public Integer getInteger(String session_name) {
         try {
-            return getPref().getInt(session_name, new Integer(0));
+            return sharedPreferences.getInt(session_name, new Integer(0));
         } catch (Exception e) {
 
         }
@@ -96,7 +92,7 @@ public class Sessions extends AppCompatActivity {
 
     public Long getLong(String session_name) {
         try {
-            return getPref().getLong(session_name, new Long(0));
+            return sharedPreferences.getLong(session_name, new Long(0));
         } catch (Exception e) {
 
         }
@@ -105,7 +101,7 @@ public class Sessions extends AppCompatActivity {
 
     public Boolean getBoolean(String session_name) {
         try {
-            return getPref().getBoolean(session_name, false);
+            return sharedPreferences.getBoolean(session_name, false);
         } catch (Exception e) {
 
         }
@@ -114,7 +110,7 @@ public class Sessions extends AppCompatActivity {
 
     public Float getFloat(String session_name) {
         try {
-            return getPref().getFloat(session_name, 0.0f);
+            return sharedPreferences.getFloat(session_name, 0.0f);
         } catch (Exception e) {
 
         }
@@ -125,8 +121,8 @@ public class Sessions extends AppCompatActivity {
 
     public void remove(String session_name) {
         try {
-            getPref().edit().remove(session_name);
-            getPref().edit().commit();
+            sharedPreferences.edit().remove(session_name);
+            sharedPreferences.edit().commit();
         } catch (Exception e) {
 
         }
@@ -134,18 +130,10 @@ public class Sessions extends AppCompatActivity {
 
     public void destroy() {
         try {
-            getPref().edit().clear();
-            getPref().edit().commit();
+            sharedPreferences.edit().clear();
+            sharedPreferences.edit().commit();
         } catch (Exception e) {
 
         }
-    }
-
-    public SharedPreferences getPref() {
-        return pref;
-    }
-
-    public void setPref(SharedPreferences pref) {
-        this.pref = pref;
     }
 }

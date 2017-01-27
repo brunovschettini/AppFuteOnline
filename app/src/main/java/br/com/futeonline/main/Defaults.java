@@ -1,5 +1,7 @@
 package br.com.futeonline.main;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
@@ -142,4 +144,5 @@ public class Defaults extends AppCompatActivity {
         }
         return key_token;
     }
+
 }

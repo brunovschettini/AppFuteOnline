@@ -1,5 +1,8 @@
 package br.com.futeonline.main;
 
+import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -7,10 +10,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,9 +25,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.google.gson.Gson;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import br.com.futeonline.R;
 import br.com.futeonline.objects.UserToken;
 import br.com.futeonline.utils.Consulta;
@@ -40,9 +48,12 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences pref;  // 0 - for private mode
     // private Progress progress;
     private View mLoginFormView;
+    private Sessions sessions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sessions = new Sessions(this);
         setContentView(R.layout.activity_login);
         View v = this.findViewById(android.R.id.content).getRootView();
         wv = (WebView) findViewById(R.id.webView);
@@ -99,6 +110,9 @@ public class LoginActivity extends AppCompatActivity {
 
         // Set up the login form.
         login = (EditText) findViewById(R.id.login);
+        if(login.getText().toString().isEmpty()) {
+           login.setText(getMailGoogleAccount(), TextView.BufferType.EDITABLE);
+        }
         password = (EditText) findViewById(R.id.password);
 
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -174,7 +188,10 @@ public class LoginActivity extends AppCompatActivity {
                         return;
                     }
                     try {
-                        pref.edit().putString("access_token", userToken.getAccessToken());
+                        SharedPreferences.Editor editor = pref.edit();
+                        // editor.putString("access_token", userToken.getAccessToken());
+                        // editor.commit();
+                        sessions.put("access_token", userToken.getAccessToken());
                         String s = pref.getString("access_token", null);
                         Intent it = new Intent(LoginActivity.this, MenuActivity.class);
                         startActivity(it);
@@ -208,6 +225,29 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         }
         return false;
+    }
+
+    private String getMailGoogleAccount() {
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                AccountManager accountManager = AccountManager.get(this);
+                Account[] accounts = accountManager.getAccountsByType("com.google");
+                if (accounts.length > 0) {
+                    Account account = accounts[0];
+                    return account.name;
+                }
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
 }

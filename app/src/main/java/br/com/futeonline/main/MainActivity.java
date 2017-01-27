@@ -16,14 +16,17 @@ import br.com.futeonline.utils.Sessions;
 public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences pref;  // 0 - for private mode
+    private Sessions sessions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pref = getApplicationContext().getSharedPreferences("futeonline", 0);
+        sessions = new Sessions(this);
+        String access = sessions.getString("access_token");
         try {
-            if (!pref.getString("access_token", "").isEmpty()) {
+            if (sessions.getString("access_token") != null && !sessions.getString("access_token").isEmpty()) {
                 Intent it = new Intent(MainActivity.this, MenuActivity.class);
                 startActivity(it);
                 return;
