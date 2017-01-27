@@ -20,4 +20,22 @@
         completions."
     </string>
     <string name="txt_logged">Sign</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="txt_logout">Logout</string>,
+    <string name="txt_security">Security</string>
+    <string name="txt_friends">Friends</string>
+    <string name="txt_soccer_schedule">Soccer Schedule</string>
+    <string name="txt_invite_game">Invite Game</string>
+    <string name="txt_players">Players</string>
+    <string name="txt_goalkeeper_find">Goalkeeper Find</string>
+    <string name="txt_notifications">Notifications</string>
+    <string name="txt_groups">Groups</string>
+    <string name="txt_moderation">Moderation</string>
+    <string name="txt_teams">Teams</string>
+    <string name="txt_ranking">Ranking</string>
+    <string name="txt_manage">Manage</string>
+    <string name="txt_user_plans">Plans</string>
+    <string name="txt_goalkeeper">Goalkeeper</string>
 </resources>

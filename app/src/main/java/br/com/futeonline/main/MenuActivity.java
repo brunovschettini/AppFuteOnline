@@ -5,20 +5,24 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.StrictMode;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,22 +37,22 @@ import br.com.futeonline.R;
 import br.com.futeonline.objects.Notify;
 import br.com.futeonline.utils.Consulta;
 import br.com.futeonline.utils.QueryResult;
+import br.com.futeonline.utils.Sessions;
 
-public class MenuActivity extends AppCompatActivity {
+public class MenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private SharedPreferences pref;  // 0 - for private mode
-    Button btn_notify;
-    WebView wv;
+    private Sessions sessions;
+    private String userName = "";
+    private String userEmail = "";
     Thread threadPush;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        pref = getApplicationContext().getSharedPreferences("futeonline", 0);
+        sessions = new Sessions(this);
         try {
-            if (pref.getString("access_token", "").isEmpty()) {
+            if (sessions.getString("access_token").isEmpty()) {
                 Intent it = new Intent(MenuActivity.this, MainActivity.class);
                 startActivity(it);
                 return;
@@ -58,122 +62,123 @@ public class MenuActivity extends AppCompatActivity {
             e.getMessage();
         }
 
-        wv = (WebView) findViewById(R.id.webView);
-        WebSettings ws = wv.getSettings();
-        ws.setJavaScriptEnabled(true);
-        ws.setSupportZoom(false);
-        //ws.setJavaScriptCanOpenWindowsAutomatically(true);
-        // ws.setPluginState(WebSettings.PluginState.ON);
-        wv.setWebViewClient(new WebViewClient());
-        // wv.setWebChromeClient(new WebChromeClient() {});
-        // wv.getSettings().setAllowFileAccess(true);
-        wv.setSoundEffectsEnabled(true);
-        initComponents();
+        setUserName(sessions.getString("user_name"));
+        setUserEmail(sessions.getString("user_mail"));
 
-        int SDK_INT = android.os.Build.VERSION.SDK_INT;
-        if (SDK_INT > 16) {
-            // wv.getSettings().setMediaPlaybackRequiresUserGesture(false);
+        TextView user = (TextView) findViewById(R.id.id_nav_header_user);
+        try {
+            View form_nav_header_main = findViewById(R.id.nav_view);
+            user = (TextView) form_nav_header_main.findViewById(R.id.id_nav_header_email);
+            user.setText(userName);
+        } catch (Exception e) {
+            e.getMessage();
         }
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
-
-        btn_notify = (Button) findViewById(R.id.btn_notify);
-
-        btn_notify.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent it = new Intent(MenuActivity.this, NotificationView.class);
-                startActivity(it);
-            }
-        });
-
-        /**
-         String path = getFilesDir().toString();
-         File file = new File(path + "/defaults.json");
-         String url = "";
-         String mac = "";
-         String client = "";
-         String tipo = "";
-         String catraca = "";
-         Boolean test = false;
-         String urlString = "";
-
-         if(file.exists()) {
-         Defaults defaults = new Defaults();
-         defaults.loadJson(getFilesDir().toString());
-         String json = JsonUtils.read(getFilesDir().toString() + "/defaults.json");
-         try {
-         if(!defaults.getUrl().isEmpty()) {
-         urlString = "http://" + defaults.getUrl() + "/monitorCatraca/index.xhtml?";
-         }
-         if(!defaults.getClient().isEmpty()) {
-         urlString += "cliente=" + defaults.getClient();
-         }
-         if(!defaults.getMac().isEmpty()) {
-         urlString += "&mac=" + defaults.getMac();
-         }
-         if(!defaults.getType().isEmpty()) {
-         urlString += "&tipo=" + defaults.getType();
-         }
-         if(defaults.getTest()) {
-         urlString += "&test=" + defaults.getTest();
-         }
-         if(!defaults.getCatraca().isEmpty()) {
-         urlString += "&catraca=" + defaults.getCatraca();
-         }
-         } catch (Exception e) {
-
-         }
-         }
-         */
-        // "http://sinecol.ddns.net:7070/Sindical/ws/senha.jsf?client=ComercioLimeira&mac=94-0C-6D-86-94-34&tipo=SALA&test=true"
-        // http://sindical.rtools.com.br:8080/Sindical/ws/senha.jsf?client=Sindical&mac=00-11-D8-3D-45-D0&tipo=SALA
-
 
         try {
-            wv.loadUrl(Defaults.getSite());
-        } catch (Exception e) {
+            View form_nav_header_main = findViewById(R.id.form_nav_header_main);
+            TextView mail = (TextView) form_nav_header_main.findViewById(R.id.id_nav_header_email);
+            mail.setText(userEmail);
 
+        } catch (Exception e) {
+            e.getMessage();
         }
 
 
-        threadPush = new Thread(n);
-        threadPush.start();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-
-        //cookieManager.setAcceptCookie(true);
-
-
-        // Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://sindical.rtools.com.br:8080/Sindical/ws/senha.jsf?cliente=Sindical&mac=00-11-D8-3D-45-D0&tipo=SALA"));
-        // startActivity(browserIntent);
-    }
-
-    public void initComponents() {
-        /*btnConfig = (Button) findViewById(R.id.btn_config);
-
-        btnConfig.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent it = new Intent(MainActivity.this, Config.class);
-                startActivity(it);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
 
-        Object syncToken = new Object();
-        threadPush = new Thread(push);
-        threadPush.start();*/
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        threadPush = new Thread(n);
+        threadPush.start();
     }
-
-    Runnable push = new Runnable() {
-        @Override
-        public void run() {
-
-        }
-    };
 
     @Override
     public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            // super.onBackPressed();
+        }
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        if (id == R.id.nav_friends) {
+        } else if (id == R.id.nav_soccer_schedule) {
+        } else if (id == R.id.nav_invite_game) {
+        } else if (id == R.id.nav_players) {
+        } else if (id == R.id.nav_goalkeeper_find) {
+        } else if (id == R.id.nav_notifications) {
+            //} else if (id == R.id.nav_groups) {
+            //} else if (id == R.id.nav_group_moderator) {
+        } else if (id == R.id.nav_logout) {
+            sessions.destroy();
+            Intent it = new Intent(MenuActivity.this, MainActivity.class);
+            startActivity(it);
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
 
@@ -192,7 +197,7 @@ public class MenuActivity extends AppCompatActivity {
                 Map map2 = new HashMap();
                 try {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("access_token", pref.getString("access_token", ""));
+                    jsonObject.put("access_token", sessions.getString("access_token"));
                     String result = Consulta.result(Consulta.makeRequest(Defaults.getKeyToken(), Defaults.getSite() + "/ws/notify/my", jsonObject));
                     Gson gson = new Gson();
                     QueryResult notifyResponse = (QueryResult) gson.fromJson(result, QueryResult.class);
@@ -203,7 +208,8 @@ public class MenuActivity extends AppCompatActivity {
                             c = true;
                             List<Notify> listNotify = gson.fromJson(result, new TypeToken<List<Notify>>() {
                             }.getType());
-                            notifies(this.wv, listNotify);
+                            View v = this.getCurrentFocus();
+                            notifies(v, listNotify);
                         }
                     }
                 } catch (Exception e) {
@@ -260,6 +266,4 @@ public class MenuActivity extends AppCompatActivity {
         } catch (Exception e) {
         }
     }
-
-
 }

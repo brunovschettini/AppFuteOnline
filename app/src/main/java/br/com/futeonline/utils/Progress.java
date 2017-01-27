@@ -87,7 +87,7 @@ public class Progress extends AppCompatActivity {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         // progressDialog.setProgress(0);
         progressDialog.setIndeterminate(true);
-        progressDialog.setIcon(R.drawable.preloader_1);
+        // progressDialog.setIcon(R.drawable.preloader_1);
         try {
             new Thread().sleep(2000);
         } catch (Exception e) {

@@ -20,9 +20,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.futeonline.R;
 import br.com.futeonline.objects.Notify;
 import br.com.futeonline.utils.Consulta;
+import br.com.futeonline.R;
 
 public class NotificationView extends ActionBarActivity {
 

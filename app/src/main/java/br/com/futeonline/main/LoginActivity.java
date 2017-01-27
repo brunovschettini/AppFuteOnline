@@ -31,7 +31,6 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.com.futeonline.R;
 import br.com.futeonline.objects.UserToken;
 import br.com.futeonline.utils.Consulta;
 import br.com.futeonline.utils.DialogMessage;
@@ -39,6 +38,7 @@ import br.com.futeonline.utils.Progress;
 import br.com.futeonline.utils.QueryResult;
 import br.com.futeonline.utils.Sessions;
 import br.com.futeonline.utils.Validator;
+import br.com.futeonline.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -46,7 +46,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText login;
     private EditText password;
     private SharedPreferences pref;  // 0 - for private mode
-    // private Progress progress;
     private View mLoginFormView;
     private Sessions sessions;
 
@@ -70,35 +69,6 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.getMessage();
         }
-        // mProgressView = findViewById(R.id.login_progress);
-/*
-        db = new SQLiteDatabaseHandler(this);
-        // create some players
-        Player player1 = new Player(1, "Lebron James", "F", 203);
-        Player player2 = new Player(2, "Kevin Durant", "F", 208);
-        Player player3 = new Player(3, "Rudy Gobert", "C", 214);
-        // add them
-        db.addPlayer(player1);
-        db.addPlayer(player2);
-        db.addPlayer(player3);
-        // list all players
-        List<Player> players = db.allPlayers();
-
-        if (players != null) {
-            String[] itemsNames = new String[players.size()];
-
-            for (int i = 0; i < players.size(); i++) {
-                itemsNames[i] = players.get(i).toString();
-            }
-
-            // display like string instances
-            ListView list = (ListView) findViewById(R.id.list);
-            list.setAdapter(new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, itemsNames));
-
-        }
-        */
-
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
         if (SDK_INT > 16) {
             // wv.getSettings().setMediaPlaybackRequiresUserGesture(false);
@@ -110,8 +80,8 @@ public class LoginActivity extends AppCompatActivity {
 
         // Set up the login form.
         login = (EditText) findViewById(R.id.login);
-        if(login.getText().toString().isEmpty()) {
-           login.setText(getMailGoogleAccount(), TextView.BufferType.EDITABLE);
+        if (login.getText().toString().isEmpty()) {
+            login.setText(getMailGoogleAccount(), TextView.BufferType.EDITABLE);
         }
         password = (EditText) findViewById(R.id.password);
 
@@ -189,9 +159,19 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     try {
                         SharedPreferences.Editor editor = pref.edit();
-                        // editor.putString("access_token", userToken.getAccessToken());
-                        // editor.commit();
                         sessions.put("access_token", userToken.getAccessToken());
+                        sessions.put("user_id", userToken.getUsers().getId());
+                        sessions.put("user_name", userToken.getUsers().getPeople().getName());
+                        sessions.put("user_middle_name", userToken.getUsers().getPeople().getMidleName());
+                        sessions.put("user_last_name", userToken.getUsers().getPeople().getLastName());
+                        sessions.put("user_gender", userToken.getUsers().getPeople().getGender().getName());
+                        sessions.put("user_birthday", userToken.getUsers().getPeople().getName());
+                        sessions.put("user_mobile_phone", userToken.getUsers().getPeople().getMobilePhone());
+                        sessions.put("user_email", userToken.getUsers().getEmail());
+                        sessions.put("user_city", "");
+                        sessions.put("user_zipcode", "");
+                        sessions.put("user_state", "");
+                        sessions.put("user_country", "");
                         String s = pref.getString("access_token", null);
                         Intent it = new Intent(LoginActivity.this, MenuActivity.class);
                         startActivity(it);
@@ -228,24 +208,20 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private String getMailGoogleAccount() {
-        try {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                AccountManager accountManager = AccountManager.get(this);
-                Account[] accounts = accountManager.getAccountsByType("com.google");
-                if (accounts.length > 0) {
-                    Account account = accounts[0];
-                    return account.name;
-                }
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+        AccountManager accountManager = AccountManager.get(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            Account[] accounts = accountManager.getAccountsByType("com.google");
+            if (accounts.length > 0) {
+                Account account = accounts[0];
+                return account.name;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return "";
     }

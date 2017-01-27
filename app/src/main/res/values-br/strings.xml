@@ -20,4 +20,22 @@
         completions."
     </string>
     <string name="txt_logged">Entrar</string>
+    <string name="navigation_drawer_open">Abrir</string>
+    <string name="navigation_drawer_close">Fechar</string>
+    <string name="action_settings">Configurações</string>
+    <string name="txt_logout">Sair</string>
+    <string name="txt_security">Segurança</string>
+    <string name="txt_friends">Amigos</string>
+    <string name="txt_soccer_schedule">Agendar Jogo</string>
+    <string name="txt_invite_game">Convite para Jogo</string>
+    <string name="txt_players">Jogadores</string>
+    <string name="txt_goalkeeper_find">Alugar Goleiro</string>
+    <string name="txt_notifications">Notificações</string>
+    <string name="txt_groups">Grupos</string>
+    <string name="txt_moderation">Moderadores</string>
+    <string name="txt_teams">Times</string>
+    <string name="txt_ranking">Ranking</string>
+    <string name="txt_manage">Gerenciar</string>
+    <string name="txt_user_plans">Planos</string>
+    <string name="txt_goalkeeper">Eu, Goleiro</string>
 </resources>

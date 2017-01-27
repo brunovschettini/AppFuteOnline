@@ -121,8 +121,9 @@ public class Sessions {
 
     public void remove(String session_name) {
         try {
-            sharedPreferences.edit().remove(session_name);
-            sharedPreferences.edit().commit();
+            editor = sharedPreferences.edit();
+            editor.remove(session_name);
+            editor.commit();
         } catch (Exception e) {
 
         }
@@ -130,8 +131,9 @@ public class Sessions {
 
     public void destroy() {
         try {
-            sharedPreferences.edit().clear();
-            sharedPreferences.edit().commit();
+            editor = sharedPreferences.edit();
+            editor.clear();
+            editor.commit();
         } catch (Exception e) {
 
         }
