@@ -5,13 +5,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Future;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -20,9 +26,13 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRouteParams;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +42,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 
 import br.com.futeonline.main.Defaults;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class Consulta {
 
@@ -100,8 +112,10 @@ public class Consulta {
 
     public static HttpResponse makeRequest(String key_token, String path, JSONObject jsonObject) throws Exception {
         try {
+            final HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
             //instantiates httpclient to make request
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = new DefaultHttpClient(httpParams);
 
             //url with the post data
             HttpPost httpost = new HttpPost(path);
@@ -117,6 +131,9 @@ public class Consulta {
                 httpost.setEntity(se);
 
             }
+            HttpParams params = httpclient.getParams();
+            HttpConnectionParams.setConnectionTimeout(params, 10000);
+            HttpConnectionParams.setSoTimeout(params, 10000);
             //sets a request header so the page receving the request
             //will know what to do with it
             httpost.setHeader("Accept", "application/json");
@@ -125,11 +142,9 @@ public class Consulta {
                 httpost.setHeader("X-FuteOnline-Key-Token", key_token);
             }
 
-            //Handles what is returned from the page
-            // ResponseHandler responseHandler = new BasicResponseHandler();
-            // return httpclient.execute(httpost, responseHandler);
-
             return httpclient.execute(httpost);
+
+
         } catch (Exception e) {
             e.getMessage();
             return null;

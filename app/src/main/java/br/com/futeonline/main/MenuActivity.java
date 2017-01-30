@@ -22,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -45,12 +46,14 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
     private String userName = "";
     private String userEmail = "";
     Thread threadPush;
+    private TextView user;
+    private TextView mail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_menu);
-        sessions = new Sessions(this);
         try {
             if (sessions.getString("access_token").isEmpty()) {
                 Intent it = new Intent(MenuActivity.this, MainActivity.class);
@@ -62,31 +65,9 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
             e.getMessage();
         }
 
-        setUserName(sessions.getString("user_name"));
-        setUserEmail(sessions.getString("user_mail"));
-
-        TextView user = (TextView) findViewById(R.id.id_nav_header_user);
-        try {
-            View form_nav_header_main = findViewById(R.id.nav_view);
-            user = (TextView) form_nav_header_main.findViewById(R.id.id_nav_header_email);
-            user.setText(userName);
-        } catch (Exception e) {
-            e.getMessage();
-        }
-
-        try {
-            View form_nav_header_main = findViewById(R.id.form_nav_header_main);
-            TextView mail = (TextView) form_nav_header_main.findViewById(R.id.id_nav_header_email);
-            mail.setText(userEmail);
-
-        } catch (Exception e) {
-            e.getMessage();
-        }
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,11 +82,49 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
+        TextView v = (TextView) toolbar.findViewById(R.id.id_nav_header_user);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerLayout = navigationView.getHeaderView(0);
         threadPush = new Thread(n);
         threadPush.start();
+
+        sessions = new Sessions(this);
+        setUserName(sessions.getString("user_name"));
+        setUserEmail(sessions.getString("user_mail"));
+
+        try {
+            TextView textView = (TextView) headerLayout.findViewById(R.id.id_nav_header_user);
+            textView.setText("AAAA");
+            textView.requestFocus();
+        } catch (Exception e) {
+
+        }
+
+
+
+        try {
+            user = (TextView) navigationView.findViewById(R.id.id_nav_header_user);
+            user.setText(userName, TextView.BufferType.NORMAL);
+            user.requestFocus();
+        } catch (Exception e) {
+            e.getMessage();
+        }
+
+        try {
+            ImageView imageView = (ImageView) navigationView.findViewById(R.id.imageView);
+            imageView.requestFocus();
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        try {
+            setMail((TextView) findViewById(R.id.id_nav_header_email));
+            getMail().setText(userEmail);
+            getMail().requestFocus();
+
+        } catch (Exception e) {
+            e.getMessage();
+        }
     }
 
     @Override
@@ -265,5 +284,21 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
             toque.play();
         } catch (Exception e) {
         }
+    }
+
+    public TextView getUser() {
+        return user;
+    }
+
+    public void setUser(TextView user) {
+        this.user = user;
+    }
+
+    public TextView getMail() {
+        return mail;
+    }
+
+    public void setMail(TextView mail) {
+        this.mail = mail;
     }
 }

@@ -3,16 +3,11 @@ package br.com.futeonline.main;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
@@ -23,7 +18,6 @@ import android.view.inputmethod.EditorInfo;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -31,14 +25,13 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.futeonline.R;
 import br.com.futeonline.objects.UserToken;
 import br.com.futeonline.utils.Consulta;
 import br.com.futeonline.utils.DialogMessage;
-import br.com.futeonline.utils.Progress;
 import br.com.futeonline.utils.QueryResult;
 import br.com.futeonline.utils.Sessions;
 import br.com.futeonline.utils.Validator;
-import br.com.futeonline.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -48,11 +41,14 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences pref;  // 0 - for private mode
     private View mLoginFormView;
     private Sessions sessions;
+    private Button auth;
+    private String result = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sessions = new Sessions(this);
+        result = "";
         setContentView(R.layout.activity_login);
         View v = this.findViewById(android.R.id.content).getRootView();
         wv = (WebView) findViewById(R.id.webView);
@@ -96,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button auth = (Button) findViewById(R.id.auth);
+        auth = (Button) findViewById(R.id.auth);
         auth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,41 +102,53 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void attemptLogin() {
+        auth.setText("...loading", TextView.BufferType.EDITABLE);
+        auth.requestFocus();
         View focusView = null;
         View v = this.findViewById(android.R.id.content).getRootView();
-
 
         if (login == null || login.getText().toString().isEmpty()) {
             login.setError(getString(R.string.error_invalid_email));
             focusView = login;
             focusView.requestFocus();
+            complete();
             return;
         }
         if (!Validator.isEmailValid(login.getText().toString())) {
             login.setError(getString(R.string.error_invalid_email));
             focusView = login;
             focusView.requestFocus();
+            complete();
             return;
         }
         if (password == null || password.getText().toString().isEmpty()) {
             password.setError(getString(R.string.error_invalid_password));
             focusView = password;
             focusView.requestFocus();
+            complete();
             return;
         }
         if (!Validator.isPasswordValid(password.getText().toString())) {
             password.setError(getString(R.string.error_invalid_password));
             focusView = password;
             focusView.requestFocus();
+            complete();
             return;
         }
         Map map2 = new HashMap();
+        final ProgressDialog pd = ProgressDialog.show(this, "Please wait ...", "...", true);
+        pd.setIndeterminate(true);
+        pd.show();
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        pd.dismiss();
+                    }
+                }, 3000);
         try {
-            final ProgressDialog ringProgressDialog = ProgressDialog.show(this, "Please wait ...", "...", true);
             String result = Consulta.result(Consulta.makeRequestNonToken(Defaults.getSite() + "/ws/auth/in/" + login.getText().toString() + "/" + password.getText().toString()));
-            ringProgressDialog.dismiss();
-
             // showProgress(false);
+            complete();
             UserToken userToken = null;
             QueryResult queryResult = null;
             Boolean convert = false;
@@ -190,6 +198,20 @@ public class LoginActivity extends AppCompatActivity {
 
         }
     }
+
+    public void complete() {
+        try {
+            auth.setText("Entrar", TextView.BufferType.EDITABLE);
+            auth.setEnabled(true);
+            auth.requestFocus();
+            setResult(RESULT_OK, null);
+            result = "";
+            // finish();
+        } catch (Exception e) {
+
+        }
+    }
+
 
     public void register() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Defaults.getSite() + "/" + "register.xhtml"));
