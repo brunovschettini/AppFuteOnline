@@ -22,7 +22,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -52,8 +51,8 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_menu);
+        sessions = new Sessions(this);
         try {
             if (sessions.getString("access_token").isEmpty()) {
                 Intent it = new Intent(MenuActivity.this, MainActivity.class);
@@ -89,41 +88,22 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         threadPush = new Thread(n);
         threadPush.start();
 
-        sessions = new Sessions(this);
+
         setUserName(sessions.getString("user_name"));
         setUserEmail(sessions.getString("user_mail"));
 
         try {
             TextView textView = (TextView) headerLayout.findViewById(R.id.id_nav_header_user);
-            textView.setText("AAAA");
-            textView.requestFocus();
+            textView.setText(userName, TextView.BufferType.NORMAL);
         } catch (Exception e) {
 
         }
 
-
-
         try {
-            user = (TextView) navigationView.findViewById(R.id.id_nav_header_user);
-            user.setText(userName, TextView.BufferType.NORMAL);
-            user.requestFocus();
+            TextView textView = (TextView) headerLayout.findViewById(R.id.id_nav_header_email);
+            textView.setText(userEmail, TextView.BufferType.NORMAL);
         } catch (Exception e) {
-            e.getMessage();
-        }
 
-        try {
-            ImageView imageView = (ImageView) navigationView.findViewById(R.id.imageView);
-            imageView.requestFocus();
-        } catch (Exception e) {
-            e.getMessage();
-        }
-        try {
-            setMail((TextView) findViewById(R.id.id_nav_header_email));
-            getMail().setText(userEmail);
-            getMail().requestFocus();
-
-        } catch (Exception e) {
-            e.getMessage();
         }
     }
 
@@ -153,6 +133,8 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent it = new Intent(MenuActivity.this, SettingsActivity.class);
+            startActivity(it);
             return true;
         }
 
@@ -162,7 +144,10 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        // FragmentManager fragmentManager = getFragmentManager();
         // Handle navigation view item clicks here.
+        View include = (View) findViewById(R.id.id_app_bar_main);
+        View includeContent = include.findViewById(R.id.include_content);
         int id = item.getItemId();
         if (id == R.id.nav_friends) {
         } else if (id == R.id.nav_soccer_schedule) {
@@ -170,12 +155,20 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_players) {
         } else if (id == R.id.nav_goalkeeper_find) {
         } else if (id == R.id.nav_notifications) {
+            // fragmentManager.beginTransaction().replace(R.id.container, new NotificationView()).commit();
+            Intent it = new Intent(MenuActivity.this, NotificationView.class);
+            startActivity(it);
             //} else if (id == R.id.nav_groups) {
             //} else if (id == R.id.nav_group_moderator) {
+        } else if (id == R.id.nav_site) {
+            Intent it = new Intent(MenuActivity.this, WebSiteActivity.class);
+            startActivity(it);
         } else if (id == R.id.nav_logout) {
             sessions.destroy();
             Intent it = new Intent(MenuActivity.this, MainActivity.class);
             startActivity(it);
+        } else {
+            // fragmentManager.beginTransaction().replace(R.id.container, null).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -210,6 +203,7 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
 
     public void notifies() {
         Boolean c = true;
+        Boolean empty = true;
         while (true == c) {
             try {
 
@@ -217,13 +211,13 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
                 try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("access_token", sessions.getString("access_token"));
-                    String result = Consulta.result(Consulta.makeRequest(Defaults.getKeyToken(), Defaults.getSite() + "/ws/notify/my", jsonObject));
+                    String result = Consulta.result(Consulta.makeRequest(sessions.getString("access_token"), Defaults.getSite() + "/ws/notify/my", null));
                     Gson gson = new Gson();
                     QueryResult notifyResponse = (QueryResult) gson.fromJson(result, QueryResult.class);
                     if (notifyResponse.getStatus() == 1) {
                         result = "" + notifyResponse.getResult();
                         if (notifyResponse.getResult() > 0) {
-                            result = Consulta.result(Consulta.makeRequest(Defaults.getKeyToken(), Defaults.getSite() + "/ws/notify/show/", jsonObject));
+                            result = Consulta.result(Consulta.makeRequest(sessions.getString("access_token"), Defaults.getSite() + "/ws/notify/show", null));
                             c = true;
                             List<Notify> listNotify = gson.fromJson(result, new TypeToken<List<Notify>>() {
                             }.getType());
@@ -253,10 +247,11 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void notifies(View view, List<Notify> list) {
-
+        if(list.isEmpty()) {
+            return;
+        }
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         PendingIntent p = PendingIntent.getActivity(this, 0, new Intent(this, NotificationView.class), 0);
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setTicker("Ticker Texto");
         builder.setContentTitle("Título");

@@ -5,7 +5,8 @@
         <item
             android:id="@+id/nav_friends"
             android:icon="@drawable/ic_peoples"
-            android:title="@string/txt_friends" />
+            android:title="@string/txt_friends"
+            android:enabled="false"/>
         <item
             android:id="@+id/nav_soccer_schedule"
             android:icon="@drawable/ic_calendar"
@@ -29,13 +30,16 @@
         <item
             android:id="@+id/nav_notifications"
             android:icon="@drawable/ic_notifications"
-            android:title="@string/txt_notifications"
-            android:enabled="false"/>
+            android:title="@string/txt_notifications"/>
 
     </group>
 
     <item android:title="@string/txt_manage">
         <menu>
+            <item
+                android:id="@+id/nav_site"
+                android:icon="@mipmap/ic_site"
+                android:title="Site"/>
             <item
                  android:id="@+id/nav_groups"
                  android:title="@string/txt_groups"
